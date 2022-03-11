@@ -16,6 +16,7 @@ import {
   findNodeHandle,
   NativeEventSubscription,
 } from 'react-native';
+import color from 'color';
 
 import { withTheme } from '../../core/theming';
 import type { $Omit } from '../../types';
@@ -529,7 +530,7 @@ class Menu extends React.Component<Props, State> {
     const shadowMenuContainerStyle = {
       opacity: opacityAnimation,
       transform: scaleTransforms,
-      borderRadius: theme.roundness,
+      borderRadius: theme.isV3 ? 4 : theme.roundness,
       ...(scrollableMenuHeight ? { height: scrollableMenuHeight } : {}),
     };
 
@@ -571,6 +572,13 @@ class Menu extends React.Component<Props, State> {
                     [
                       styles.shadowMenuContainer,
                       shadowMenuContainerStyle,
+                      theme.isV3 && styles.md3ShadowMenuContainer,
+                      theme.isV3 && {
+                        backgroundColor: color(theme.colors.surface)
+                          .mix(color(theme.colors.primary), 0.08)
+                          .rgb()
+                          .string(),
+                      },
                       contentStyle,
                     ] as StyleProp<ViewStyle>
                   }
@@ -596,6 +604,9 @@ const styles = StyleSheet.create({
     opacity: 0,
     paddingVertical: 8,
     elevation: 8,
+  },
+  md3ShadowMenuContainer: {
+    elevation: 3,
   },
 });
 
