@@ -30,6 +30,10 @@ type Props = {
    */
   left?: (props: { color: string }) => React.ReactNode;
   /**
+   * Does left have a pressable element?
+   */
+   leftHasPress? : boolean;
+  /**
    * Callback which returns a React element to display on the right side.
    */
   right?: (props: { isExpanded: boolean }) => React.ReactNode;
@@ -136,6 +140,7 @@ type Props = {
  */
 const ListAccordion = ({
   left,
+  leftHasPress,
   right,
   title,
   description,
@@ -202,7 +207,7 @@ const ListAccordion = ({
           delayPressIn={0}
           borderless
         >
-          <View style={styles.row} pointerEvents="none">
+          <View style={styles.row} pointerEvents={leftHasPress ? "auto" : "none"}>
             {left
               ? left({
                   color: isExpanded ? theme.colors.primary : descriptionColor,
