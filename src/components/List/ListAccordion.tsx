@@ -8,6 +8,7 @@ import {
   TextStyle,
   I18nManager,
   GestureResponderEvent,
+  Animated,
 } from 'react-native';
 import TouchableRipple from '../TouchableRipple/TouchableRipple';
 import MaterialCommunityIcon from '../MaterialCommunityIcon';
@@ -15,6 +16,7 @@ import Text from '../Typography/Text';
 import { withTheme } from '../../core/theming';
 
 import { ListAccordionGroupContext } from './ListAccordionGroup';
+import { Swipeable } from 'react-native-gesture-handler';
 
 type Props = {
   /**
@@ -93,8 +95,20 @@ type Props = {
    * Accessibility label for the TouchableRipple. This is read by the screen reader when the user taps the touchable.
    */
   accessibilityLabel?: string;
-};
+  /**
+   * Swipeable swipeRef - property to use as the ref for the swipable component referenced by renderRightActions
+   */
+  swipeRef?: string;
+  /**
+   * Enable Swipeable if renderRightActions is specififed
+   */
+  renderRightActions?: (
+    progressAnimatedValue: Animated.AnimatedInterpolation,
+    dragAnimatedValue: Animated.AnimatedInterpolation
+  ) => React.ReactNode;};
 
+  const ConditionalSwipeableWrapper = ({condition, wrapper, children}) =>
+  condition ? wrapper(children) : children;
 /**
  * A component used to display an expandable list item.
  *
@@ -157,6 +171,8 @@ const ListAccordion = ({
   onLongPress,
   expanded: expandedProp,
   accessibilityLabel,
+  swipeRef,
+  renderRightActions,
 }: Props) => {
   const [expanded, setExpanded] = React.useState<boolean>(
     expandedProp || false
@@ -207,6 +223,10 @@ const ListAccordion = ({
           delayPressIn={0}
           borderless
         >
+          <ConditionalSwipeableWrapper
+            condition={renderRightActions}
+            wrapper={children => <Swipeable ref={swipeRef} renderRightActions={renderRightActions}>{children}</Swipeable>}
+          >
           <View style={styles.row} pointerEvents={leftHasPress ? "auto" : "none"}>
             {left
               ? left({
@@ -260,6 +280,7 @@ const ListAccordion = ({
               )}
             </View>
           </View>
+          </ConditionalSwipeableWrapper>
         </TouchableRipple>
       </View>
 
