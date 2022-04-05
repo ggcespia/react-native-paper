@@ -34,7 +34,7 @@ type Props = {
   /**
    * Does left have a pressable element?
    */
-   leftHasPress? : boolean;
+  leftHasPress?: boolean;
   /**
    * Callback which returns a React element to display on the right side.
    */
@@ -105,10 +105,30 @@ type Props = {
   renderRightActions?: (
     progressAnimatedValue: Animated.AnimatedInterpolation,
     dragAnimatedValue: Animated.AnimatedInterpolation
-  ) => React.ReactNode;};
+  ) => React.ReactNode;
 
-  const ConditionalSwipeableWrapper = ({condition, wrapper, children}) =>
-  condition ? wrapper(children) : children;
+  /**
+   * condition to satisfy for wrapper
+   */
+  condition: boolean;
+  /**
+   * Wrapper function.
+   */
+  wrapper: (children: React.ReactNode) => React.ReactElement;
+};
+
+const ConditionalSwipeableWrapper: React.FC<Props> = ({
+  condition,
+  wrapper,
+  children,
+}): React.ReactElement => {
+  if (condition) {
+    return wrapper(children);
+  } else {
+    return <>children</>;
+  }
+};
+
 /**
  * A component used to display an expandable list item.
  *
@@ -224,62 +244,74 @@ const ListAccordion = ({
           borderless
         >
           <ConditionalSwipeableWrapper
-            condition={renderRightActions}
-            wrapper={children => <Swipeable ref={swipeRef} renderRightActions={renderRightActions}>{children}</Swipeable>}
+            condition={renderRightActions ? true : false}
+            wrapper={(children) => (
+              <Swipeable ref={swipeRef} renderRightActions={renderRightActions}>
+                {children}
+              </Swipeable>
+            )}
+            title={undefined}
+            theme={theme}
           >
-          <View style={styles.row} pointerEvents={leftHasPress ? "auto" : "none"}>
-            {left
-              ? left({
-                  color: isExpanded ? theme.colors.primary : descriptionColor,
-                })
-              : null}
-            <View style={[styles.item, styles.content]}>
-              <Text
-                selectable={false}
-                numberOfLines={titleNumberOfLines}
-                style={[
-                  styles.title,
-                  {
-                    color: isExpanded ? theme.colors.primary : titleColor,
-                  },
-                  titleStyle,
-                ]}
-              >
-                {title}
-              </Text>
-              {description ? (
+            <View
+              style={styles.row}
+              pointerEvents={leftHasPress ? 'auto' : 'none'}
+            >
+              {left
+                ? left({
+                    color: isExpanded ? theme.colors.primary : descriptionColor,
+                  })
+                : null}
+              <View style={[styles.item, styles.content]}>
                 <Text
                   selectable={false}
-                  numberOfLines={descriptionNumberOfLines}
+                  numberOfLines={titleNumberOfLines}
                   style={[
-                    styles.description,
+                    styles.title,
                     {
-                      color: descriptionColor,
+                      color: isExpanded ? theme.colors.primary : titleColor,
                     },
-                    descriptionStyle,
+                    titleStyle,
                   ]}
                 >
-                  {description}
+                  {title}
                 </Text>
-              ) : null}
+                {description ? (
+                  <Text
+                    selectable={false}
+                    numberOfLines={descriptionNumberOfLines}
+                    style={[
+                      styles.description,
+                      {
+                        color: descriptionColor,
+                      },
+                      descriptionStyle,
+                    ]}
+                  >
+                    {description}
+                  </Text>
+                ) : null}
+              </View>
+              <View
+                style={[
+                  styles.item,
+                  description ? styles.multiline : undefined,
+                ]}
+              >
+                {right ? (
+                  right({
+                    isExpanded: isExpanded,
+                  })
+                ) : (
+                  <MaterialCommunityIcon
+                    name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                    color={titleColor}
+                    size={24}
+                    direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
+                  />
+                )}
+              </View>
             </View>
-            <View
-              style={[styles.item, description ? styles.multiline : undefined]}
-            >
-              {right ? (
-                right({
-                  isExpanded: isExpanded,
-                })
-              ) : (
-                <MaterialCommunityIcon
-                  name={isExpanded ? 'chevron-up' : 'chevron-down'}
-                  color={titleColor}
-                  size={24}
-                  direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
-                />
-              )}
-            </View>
-          </View>
           </ConditionalSwipeableWrapper>
         </TouchableRipple>
       </View>
