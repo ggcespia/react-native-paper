@@ -125,7 +125,7 @@ const ConditionalSwipeableWrapper: React.FC<Props> = ({
   if (condition) {
     return wrapper(children);
   } else {
-    return <>children</>;
+    return <>{children}</>;
   }
 };
 
