@@ -115,6 +115,10 @@ type Props = {
    * Wrapper function.
    */
   wrapper: (children: React.ReactNode) => React.ReactElement;
+  /**
+   * Outer Style that is passed to the outermost wrapper.
+   */
+  outerStyle?: StyleProp<ViewStyle>;
 };
 
 const ConditionalSwipeableWrapper: React.FC<Props> = ({
@@ -193,6 +197,7 @@ const ListAccordion = ({
   accessibilityLabel,
   swipeRef,
   renderRightActions,
+  outerStyle,
 }: Props) => {
   const [expanded, setExpanded] = React.useState<boolean>(
     expandedProp || false
@@ -227,7 +232,7 @@ const ListAccordion = ({
       ? () => groupContext.onAccordionPress(id)
       : handlePressAction;
   return (
-    <View>
+    <View style={outerStyle ? outerStyle : {}}>
       <View style={{ backgroundColor: theme.colors.background }}>
         <TouchableRipple
           style={[styles.container, style]}
