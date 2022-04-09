@@ -18,11 +18,19 @@ import { withTheme } from '../../core/theming';
 import { ListAccordionGroupContext } from './ListAccordionGroup';
 import { Swipeable } from 'react-native-gesture-handler';
 
+type Title =
+  | React.ReactNode
+  | ((props: {
+      selectable: boolean;
+      color: string;
+      fontSize: number;
+    }) => React.ReactNode);
+
 type Props = {
   /**
    * Title text for the list accordion.
    */
-  title: React.ReactNode;
+  title: Title;
   /**
    * Description text for the list accordion.
    */
@@ -213,6 +221,26 @@ const ListAccordion = ({
     }
   };
 
+  const renderTitle = () => {
+    const titleColor = color(theme.colors.text).alpha(0.87).rgb().string();
+
+    return typeof title === 'function' ? (
+      title({
+        selectable: false,
+        color: titleColor,
+        fontSize: styles.title.fontSize,
+      })
+    ) : (
+      <Text
+        selectable={false}
+        numberOfLines={titleNumberOfLines}
+        style={[styles.title, { color: titleColor }, titleStyle]}
+      >
+        {title}
+      </Text>
+    );
+  };
+
   const titleColor = color(theme.colors.text).alpha(0.87).rgb().string();
   const descriptionColor = color(theme.colors.text).alpha(0.54).rgb().string();
 
@@ -268,19 +296,7 @@ const ListAccordion = ({
                   })
                 : null}
               <View style={[styles.item, styles.content]}>
-                <Text
-                  selectable={false}
-                  numberOfLines={titleNumberOfLines}
-                  style={[
-                    styles.title,
-                    {
-                      color: isExpanded ? theme.colors.primary : titleColor,
-                    },
-                    titleStyle,
-                  ]}
-                >
-                  {title}
-                </Text>
+                {renderTitle()}
                 {description ? (
                   <Text
                     selectable={false}
