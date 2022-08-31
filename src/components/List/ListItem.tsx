@@ -78,6 +78,10 @@ type Props = $RemoveChildren<typeof TouchableRipple> & {
    */
   titleStyle?: StyleProp<TextStyle>;
   /**
+   * Style that is passed to Row element.
+   */
+  rowStyle?: StyleProp<TextStyle>;
+  /**
    * Style that is passed to Description element.
    */
   descriptionStyle?: StyleProp<TextStyle>;
@@ -141,6 +145,7 @@ const ListItem = ({
   theme,
   style,
   titleStyle,
+  rowStyle,
   titleNumberOfLines = 1,
   descriptionNumberOfLines = 2,
   titleEllipsizeMode,
@@ -205,7 +210,7 @@ const ListItem = ({
       style={[styles.container, style]}
       onPress={onPress}
     >
-      <View style={styles.row}>
+      <View style={[styles.row, rowStyle]}>
         {left
           ? left({
               color: descriptionColor,
