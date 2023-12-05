@@ -64,6 +64,14 @@ type Props = React.ComponentPropsWithRef<typeof TextInput> & {
    * Custom icon for clear button, default will be icon close
    */
   clearIcon?: IconSource;
+  /**
+   * Icon name for the right icon button (see `onRightIconPress`).
+   */
+  rightIcon?: IconSource;
+  /**
+   * Callback to execute if we want the right icon to act as button.
+   */
+  onRightIconPress?: () => void;
 };
 
 type TextInputHandles = Pick<
@@ -115,6 +123,8 @@ const Searchbar = React.forwardRef<TextInputHandles, Props>(
       style,
       theme,
       value,
+      rightIcon,
+      onRightIconPress,
       ...rest
     }: Props,
     ref
@@ -236,6 +246,17 @@ const Searchbar = React.forwardRef<TextInputHandles, Props>(
           accessibilityComponentType="button"
           accessibilityRole="button"
         />
+        {rightIcon ? (
+          <IconButton
+            borderless
+            disabled={!value}
+            color={value ? iconColor : 'rgba(255, 255, 255, 0)'}
+            rippleColor={rippleColor}
+            onPress={onRightIconPress}
+            icon={rightIcon}
+            accessibilityRole="button"
+          />
+        ) : null}
       </Surface>
     );
   }
