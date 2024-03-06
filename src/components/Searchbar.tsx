@@ -72,6 +72,14 @@ type Props = React.ComponentPropsWithRef<typeof TextInput> & {
    * Callback to execute if we want the right icon to act as button.
    */
   onRightIconPress?: () => void;
+  /**
+   * Whether to show the icon or not GGC
+   */
+  noIcon?: boolean;
+  /**
+   * Whether to show the clear icon or not GGC
+   */
+  noClearIcon?: boolean;
 };
 
 type TextInputHandles = Pick<
@@ -125,6 +133,8 @@ const Searchbar = React.forwardRef<TextInputHandles, Props>(
       value,
       rightIcon,
       onRightIconPress,
+      noIcon, // GGC
+      noClearIcon, // GGC
       ...rest
     }: Props,
     ref
@@ -178,28 +188,30 @@ const Searchbar = React.forwardRef<TextInputHandles, Props>(
           style,
         ]}
       >
-        <IconButton
-          // @ts-expect-error We keep old a11y props for backwards compat with old RN versions
-          accessibilityTraits="button"
-          accessibilityComponentType="button"
-          accessibilityRole="button"
-          borderless
-          rippleColor={rippleColor}
-          onPress={onIconPress}
-          color={iconColor}
-          icon={
-            icon ||
-            (({ size, color }) => (
-              <MaterialCommunityIcon
-                name="magnify"
-                color={color}
-                size={size}
-                direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
-              />
-            ))
-          }
-          accessibilityLabel={searchAccessibilityLabel}
-        />
+        {!noIcon && (
+          <IconButton
+            // @ts-expect-error We keep old a11y props for backwards compat with old RN versions
+            accessibilityTraits="button"
+            accessibilityComponentType="button"
+            accessibilityRole="button"
+            borderless
+            rippleColor={rippleColor}
+            onPress={onIconPress}
+            color={iconColor}
+            icon={
+              icon ||
+              (({ size, color }) => (
+                <MaterialCommunityIcon
+                  name="magnify"
+                  color={color}
+                  size={size}
+                  direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
+                />
+              ))
+            }
+            accessibilityLabel={searchAccessibilityLabel}
+          />
+        )}
         <TextInput
           style={[
             styles.input,
@@ -223,29 +235,31 @@ const Searchbar = React.forwardRef<TextInputHandles, Props>(
           value={value}
           {...rest}
         />
-        <IconButton
-          borderless
-          disabled={!value}
-          accessibilityLabel={clearAccessibilityLabel}
-          color={value ? iconColor : 'rgba(255, 255, 255, 0)'}
-          rippleColor={rippleColor}
-          onPress={handleClearPress}
-          icon={
-            clearIcon ||
-            (({ size, color }) => (
-              <MaterialCommunityIcon
-                name="close"
-                color={color}
-                size={size}
-                direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
-              />
-            ))
-          }
-          // @ts-expect-error We keep old a11y props for backwards compat with old RN versions
-          accessibilityTraits="button"
-          accessibilityComponentType="button"
-          accessibilityRole="button"
-        />
+        {!noClearIcon && (
+          <IconButton
+            borderless
+            disabled={!value}
+            accessibilityLabel={clearAccessibilityLabel}
+            color={value ? iconColor : 'rgba(255, 255, 255, 0)'}
+            rippleColor={rippleColor}
+            onPress={handleClearPress}
+            icon={
+              clearIcon ||
+              (({ size, color }) => (
+                <MaterialCommunityIcon
+                  name="close"
+                  color={color}
+                  size={size}
+                  direction={I18nManager.isRTL ? 'rtl' : 'ltr'}
+                />
+              ))
+            }
+            // @ts-expect-error We keep old a11y props for backwards compat with old RN versions
+            accessibilityTraits="button"
+            accessibilityComponentType="button"
+            accessibilityRole="button"
+          />
+        )}
         {rightIcon ? (
           <IconButton
             borderless
